@@ -78,10 +78,14 @@ namespace Bytes
         /// <summary>
         /// Repeat execution while callback return is true.
         /// </summary>
-        static public Animate Repeat(float duration_, System.Func<bool> callback_)
+        static public Animate Repeat(float duration_, System.Func<bool> callback_, int maxRepeat = -1)
         {
             Animate newAnimation = new Animate(duration_, null, () => {
-                if (callback_?.Invoke() == true) { Animate.Repeat(duration_, callback_); }
+                if (callback_?.Invoke() == true)
+                {
+                    if (maxRepeat == 0) { return; } else { if (maxRepeat != -1) { maxRepeat--; } }
+                    Animate.Repeat(duration_, callback_, maxRepeat);
+                }
             });
             newAnimation.Play(); AnimateManager.GetInstance().AddAnimation(newAnimation); return newAnimation;
         }
@@ -115,15 +119,21 @@ namespace Bytes
         static public AnimateManager GetInstance() { return instance; }
         #endregion
         private List<Animate> animations = new List<Animate>();
+        private List<Animate> animationsToAdd = new List<Animate>();
         private void Update()
         {
             var AnimationsToRemove = new List<Animate>();
+
+            // Add animations to Add
+            foreach (Animate anim in animationsToAdd) { animations.Add(anim); }
+
             foreach (Animate anim in animations)
             {
                 if (anim.GetIsDone()) { AnimationsToRemove.Add(anim); }
                 else if (anim.GetIsPlaying())
                 {
-                    anim.TriggerStepCallback(Time.deltaTime);
+                    print(Time.deltaTime);
+                    anim.TriggerStepCallback(Time.deltaTime / 50f);
                 }
             }
             // Remove unused animations
@@ -131,7 +141,7 @@ namespace Bytes
         }
         public void AddAnimation(Animate newAnimation)
         {
-            animations.Add(newAnimation);
+            animationsToAdd.Add(newAnimation);
         }
         public void RemoveAnimation(Animate removedAnimation)
         {

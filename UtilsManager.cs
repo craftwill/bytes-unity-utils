@@ -2,9 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System.Globalization;
 
 namespace Bytes
 {
+    public class IntEvent : UnityEvent<int> { }
+    public class BoolEvent : UnityEvent<bool> { }
+    public class StringEvent : UnityEvent<string> { }
+    public class FloatEvent : UnityEvent<int> { }
+    public class ObjectArrEvent : UnityEvent<object[]> { }
+
     public class Utils
     {
         public enum FilterType { CONTAINS, DOESNT_CONTAIN, EQUALS, IS_NOT }
@@ -69,7 +77,7 @@ namespace Bytes
             var lNewGameObject = GameObject.Instantiate(pOriginal, pPosition, Quaternion.Euler(pRotation));
             lNewGameObject.transform.SetParent(pOriginal.transform.parent);
             lNewGameObject.transform.localScale = pScale;
-            lNewGameObject.name = pOriginal.name + " - step clone";
+            lNewGameObject.name = pOriginal.name + " - clone";
             return lNewGameObject;
         }
 
@@ -203,6 +211,46 @@ namespace Bytes
         static public void SetOpacity(Text pText, float pAlpha)
         {
             var lColor = pText.color; lColor.a = pAlpha; pText.color = lColor;
+        }
+
+        static public float[] ComputeArraySpacings<T>(T[] trArray, float distance, float squeezingFactor = 0.05f)
+        {
+            int arrLenght = trArray.Length;
+            int halfLenght = arrLenght / 2;
+            float[] offsetsReturnArray = new float[arrLenght];
+            float finalDistance = distance - (distance * squeezingFactor * arrLenght);
+            bool evenNumber = false;
+            if (arrLenght % 2 == 0) { evenNumber = true; }
+            for (int x = 0; x < arrLenght; x++)
+            {
+                float finalOffset = 0;
+                // PATTERNS
+                // #1:      1 - 0 - 0 - 1
+                // #2:      1 - 0 - 1
+                int multiplier = 0;
+                if (evenNumber)
+                {
+                    // Even
+                    if ((x + 1) <= halfLenght) { multiplier = 1 * (halfLenght - (x + 1)); }
+                    else { multiplier = -1 * ((x + 1) - halfLenght); }
+                }
+                else
+                {
+                    // Odd
+                    if (x <= halfLenght) { multiplier = 1 * (halfLenght - x); }
+                    else { multiplier = -1 * (x - halfLenght); }
+                }
+                finalOffset = (finalDistance) * multiplier + ((evenNumber) ? finalDistance / 2 : 0);
+                offsetsReturnArray[x] = finalOffset;
+            }
+            return offsetsReturnArray;
+        }
+
+        // Removes spaces and make name be camelCased
+        static public string CamelCase(string s)
+        {
+            TextInfo txtInfo = new CultureInfo("en-us", false).TextInfo;
+            return txtInfo.ToTitleCase(s).Replace(' ', ' ').Replace(" ", System.String.Empty);
         }
     }
 }
