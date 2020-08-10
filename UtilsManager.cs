@@ -11,6 +11,11 @@ namespace Bytes
     public class BoolEvent : UnityEvent<bool> { }
     public class StringEvent : UnityEvent<string> { }
     public class FloatEvent : UnityEvent<int> { }
+
+    [System.Serializable]
+    [SerializeField]
+    public class TransformEvent : UnityEvent<Transform> { }
+
     public class ObjectArrEvent : UnityEvent<object[]> { }
 
     public class Utils
