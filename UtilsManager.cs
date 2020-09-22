@@ -146,13 +146,13 @@ namespace Bytes
         }
 
         // Used to be able to set a callback at the end of animation played by target animator
-        static public void PlayAnimatorClip(Animator animator, string clipName, System.Action callback)
+        static public Animate PlayAnimatorClip(Animator animator, string clipName, System.Action callback)
         {
             //animator.updateMode = AnimatorUpdateMode.Normal;
             //if (pRealTimeScale) { animator.updateMode = AnimatorUpdateMode.UnscaledTime; }
             float lDuration = GetAnimatorLayerDuration(animator, clipName);
             animator.Play(clipName, -1, 0);
-            Animate.Delay(lDuration, callback);
+            return Animate.Delay(lDuration, callback);
         }
 
         // Return animator clip (also known as a layer) duration by name (if it exists) 

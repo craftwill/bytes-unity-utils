@@ -125,7 +125,11 @@ namespace Bytes
             var AnimationsToRemove = new List<Animate>();
 
             // Add animations to Add
-            foreach (Animate anim in animationsToAdd) { animations.Add(anim); }
+            while (animationsToAdd.Count > 0)
+            {
+                animations.Add(animationsToAdd[0]);
+                animationsToAdd.RemoveAt(0);
+            }
 
             foreach (Animate anim in animations)
             {
