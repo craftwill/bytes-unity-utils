@@ -29,12 +29,14 @@ namespace Bytes
             if (currentPlayOnceAnim != null) { currentPlayOnceAnim.Stop(callEndFunction: false); }
 
             currentPlayOnceAnim = Utils.PlayAnimatorClip(animator, BuildClipName(prefix, animState.ClipName), ()=> {
+                currentPlayOnceAnim = null;
                 PlayStateLoopedAnimation(BuildClipName(prefix, state.ClipName));
             });
         }
 
         private void PlayStateLoopedAnimation(string clipName)
         {
+            if (currentPlayOnceAnim != null) { return; }
             animator.Play(clipName, -1, 0);
         }
 
