@@ -24,11 +24,12 @@ namespace Bytes
             PlayStateLoopedAnimation(BuildClipName(prefix, newState.ClipName));
         }
 
+        // Only use variation suffix if nbVariation is defined
         public void PlayAnimOnce(BaseAnimState animState, string prefix)
         {
             CancelCurrentPlayOnceAnim();
 
-            currentPlayOnceAnim = Utils.PlayAnimatorClip(animator, BuildClipName(prefix, animState.ClipName), ()=> {
+            currentPlayOnceAnim = Utils.PlayAnimatorClip(animator, BuildClipName(prefix, animState.ClipName, animState.NbVariations), ()=> {
                 currentPlayOnceAnim = null;
                 PlayStateLoopedAnimation(BuildClipName(prefix, state.ClipName));
             });
@@ -48,10 +49,17 @@ namespace Bytes
             animator.Play(clipName, -1, 0);
         }
 
-        private string BuildClipName(string prefix, string clipName)
+        private string BuildClipName(string prefix, string clipName, int nbVariation = -1)
         {
             if (clipName == "empty") { return clipName; }
-            return prefix + "_" + clipName;
+
+            string variationSuffix; ;
+            if (nbVariation == -1) { variationSuffix = ""; }
+            else { variationSuffix = Random.Range(1, nbVariation + 1).ToString(); }
+
+            string f = prefix + "_" + clipName + variationSuffix;
+
+            return f;
         }
 
     }
@@ -62,14 +70,17 @@ namespace Bytes
 
         private readonly string _clipName = "";
         private readonly float _animSpeed = 1f;
+        private readonly int _nbVariations = -1;
 
-        public BaseAnimState(string pClipName, float pAnimSpeed = 1f)
+        public BaseAnimState(string pClipName, float pAnimSpeed = 1f, int pNbVariations = -1)
         {
             _clipName = pClipName;
             _animSpeed = pAnimSpeed;
+            _nbVariations = pNbVariations;
         }
 
         public string ClipName { get { return _clipName; } }
         public float AnimSpeed { get { return _animSpeed; } }
+        public int NbVariations{ get { return _nbVariations; } }
     }
 }
