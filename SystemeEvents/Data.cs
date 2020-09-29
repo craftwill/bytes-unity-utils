@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace DefaultNamespace
+namespace Bytes
 {
     public interface Data
     {
-        Object GetData();
+        
     }
 }

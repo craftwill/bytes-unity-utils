@@ -1,43 +1,40 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using DefaultNamespace;
 using UnityEngine;
 
-public class Demo : MonoBehaviour
+namespace Bytes
 {
-    private void Start()
+    public class Demo : MonoBehaviour
     {
-        EventManager.AddEventListener("pressE", HandleE);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
+        private void Start()
         {
-            EventManager.Dispatch("pressE", new HandlerData(3));
+            EventManager.AddEventListener("pressE", HandleE);
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                EventManager.Dispatch("pressE", new HandlerData(3));
+            }
+        }
+
+        private void HandleE(Data data)
+        {
+            print(">>>>> Sup ma dude: data=" + ((HandlerData)data).Number);
+            //print(data.GetData());
+            //EventManager.RemoveEventListener("pressE", HandleE);
         }
     }
 
-    private void HandleE(Data data)
+    public class HandlerData : Data
     {
-        print("Sup ma dude");
-        print(data.GetData());
-        EventManager.RemoveEventListener("pressE", HandleE);
-    }
-}
-
-public class HandlerData : Data
-{
-    private readonly int _number;
-    public HandlerData(int number)
-    {
-        _number = number;
-    }
-    
-    public object GetData()
-    {
-        return _number;
+        public int Number { get; private set; }
+        public HandlerData(int number)
+        {
+            Number = number;
+        }
     }
 }
