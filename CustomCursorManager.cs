@@ -4,8 +4,13 @@ using UnityEngine;
 
 namespace Bytes
 {
-    public class CustomCursorManager : Singleton<CustomCursorManager>
+    //Singleton<CustomCursorManager>
+    public class CustomCursorManager : MonoBehaviour
     {
+        #region Singleton
+        static private CustomCursorManager Instance;
+        #endregion
+
         [SerializeField] private SpriteRenderer customCursor;
         [SerializeField] private float cursorScale = 1f;
         [SerializeField] private Vector3 cursorRotation = new Vector3(0, 0, 36f);
@@ -13,6 +18,10 @@ namespace Bytes
         [SerializeField] private Sprite[] cursorSprites;
         Transform CustomCursor;
         Camera mainCam;
+        private void Awake()
+        {
+            Instance = this;
+        }
         private void Start()
         {
             mainCam = Camera.main;

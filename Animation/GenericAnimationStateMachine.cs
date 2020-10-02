@@ -35,6 +35,17 @@ namespace Bytes
             });
         }
 
+        // Only use variation suffix if nbVariation is defined
+        public void PlayAnimOnceCustom(string animName, string prefix)
+        {
+            CancelCurrentPlayOnceAnim();
+
+            currentPlayOnceAnim = Utils.PlayAnimatorClip(animator, BuildClipName(prefix, animName, -1), () => {
+                currentPlayOnceAnim = null;
+                PlayStateLoopedAnimation(BuildClipName(prefix, state.ClipName));
+            });
+        }
+
         public void CancelCurrentPlayOnceAnim()
         {
             if (currentPlayOnceAnim != null)
