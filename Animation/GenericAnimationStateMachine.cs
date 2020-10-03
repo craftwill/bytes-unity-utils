@@ -16,7 +16,7 @@ namespace Bytes
             animator = GetComponentInChildren<Animator>();
         }
 
-        public void SetLoopedState(BaseAnimState newState, string prefix = "")
+        public void SetLoopedState(BaseAnimState newState, string prefix = "", bool force = true)
         {
             if (state == newState) { return; }
 
@@ -54,9 +54,9 @@ namespace Bytes
             }
         }
 
-        private void PlayStateLoopedAnimation(string clipName)
+        private void PlayStateLoopedAnimation(string clipName, bool force = false)
         {
-            if (currentPlayOnceAnim != null) { return; }
+            if (force != true && currentPlayOnceAnim != null) { return; }
             animator.Play(clipName, -1, 0);
         }
 
