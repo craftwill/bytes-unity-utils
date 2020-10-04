@@ -10,27 +10,26 @@ namespace Bytes
 
         public static void RemoveEventListener(string eventName, Action<Data> functionToCall)
         {
-            //print("RemoveEvent");
             Instance._eventListeners[eventName].Remove(functionToCall);
         }
 
         public static void AddEventListener(string eventName, Action<Data> functionToCall)
         {
-            //print("AddEvent");
-            //EventObserver observer = new EventObserver(subject, eventName, functionToCall);
             if (Instance._eventListeners.ContainsKey(eventName))
             {
                 Instance._eventListeners[eventName].Add(functionToCall);
-                //print("attached");
             }
             Instance._eventListeners.Add(eventName, new List<Action<Data>>() { functionToCall });
         }
 
         public static void Dispatch(string eventName, Data data)
         {
+            if (!Instance._eventListeners.ContainsKey(eventName))
+            {
+                return;
+            }
             Instance.CleanEventsFromNull(eventName);
             List<Action<Data>> functions = new List<Action<Data>>(Instance._eventListeners[eventName]);
-            //print("Dispatch");
             foreach (Action<Data> functionToCall in functions)
             {
                 functionToCall(data);
