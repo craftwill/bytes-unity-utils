@@ -56,7 +56,7 @@ namespace Bytes
 
         private void PlayStateLoopedAnimation(string clipName, bool force = false)
         {
-            if (force != true && currentPlayOnceAnim != null) { return; }
+            if (force != true && currentPlayOnceAnim != null || enabled == false) { return; }
             animator.Play(clipName, -1, 0);
         }
 
