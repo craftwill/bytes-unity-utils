@@ -18,6 +18,7 @@ namespace Bytes
             if (Instance._eventListeners.ContainsKey(eventName))
             {
                 Instance._eventListeners[eventName].Add(functionToCall);
+                return;
             }
             Instance._eventListeners.Add(eventName, new List<Action<Data>>() { functionToCall });
         }
