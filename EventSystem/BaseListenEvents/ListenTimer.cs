@@ -71,7 +71,7 @@ namespace Bytes
         {
             timeLeft = 0;
             timerMax = 0;
-            fillingImage.fillAmount = 0;
+            fillingImage.fillAmount = 1;
             currentAnim.Stop(false);
             currentAnim = null;
         }
