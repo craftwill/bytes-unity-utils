@@ -26,6 +26,10 @@ namespace Bytes
         {
             playing = false;
         }
+        public void Restart()
+        {
+            timeLeft = duration;
+        }
         public void Stop(bool callEndFunction = true)
         {
             playing = false;

@@ -4,9 +4,17 @@ using UnityEngine;
 
 namespace Bytes
 {
-    public class EventManager : Singleton<EventManager>
+    //Singleton<EventManager>
+    public class EventManager : MonoBehaviour
     {
+        private static EventManager Instance;
+
         private Dictionary<string, List<Action<Data>>> _eventListeners = new Dictionary<string, List<Action<Data>>>();
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         public static void RemoveEventListener(string eventName, Action<Data> functionToCall)
         {

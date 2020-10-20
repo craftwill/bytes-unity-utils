@@ -12,9 +12,9 @@ namespace Bytes
         #endregion
 
         [SerializeField] private Image customCursor;
-        [SerializeField] private float cursorScale = 1f;
+        [SerializeField] private float cursorScale = 0.21f;
         [SerializeField] private Vector3 cursorRotation = new Vector3(0, 0, 36f);
-        [SerializeField] private Vector3 cursorOffset = new Vector3(0, 0, 0);
+        [SerializeField] private Vector3 cursorOffset = new Vector3(18, -24, 0);
         [SerializeField] private Sprite[] cursorSprites;
         Transform CustomCursor;
         Camera mainCam;
@@ -25,16 +25,8 @@ namespace Bytes
 
             if (mouseCanvas == null)
             {
-                var g = new GameObject("mouseCanvas");
-                mouseCanvas = g.AddComponent<Canvas>();
-                mouseCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                mouseCanvas = Utils.CreateCanvas(this.transform, "mouseCanvas");
                 mouseCanvas.sortingOrder = System.Int16.MaxValue;
-
-                var cavansScaler = g.AddComponent<CanvasScaler>();
-                cavansScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                cavansScaler.referenceResolution = new Vector2(1920, 1080);
-
-                g.transform.SetParent(this.transform);
             }
         }
         private void Start()
@@ -47,6 +39,7 @@ namespace Bytes
             customCursor = cursorGameObject.AddComponent<Image>();
             customCursor.transform.localScale = new Vector3(cursorScale, cursorScale, cursorScale);
             customCursor.transform.rotation = Quaternion.Euler(cursorRotation);
+            customCursor.raycastTarget = false;
             SetCursorState(0);
 
             customCursor.SetNativeSize();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InitializableMonobehaviour : MonoBehaviour
+public interface IInitializable
 {
-    public virtual void Initialization(params object[] parameters) { }
+    void Initialization(params object[] parameters);
 }

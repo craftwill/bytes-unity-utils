@@ -9,7 +9,7 @@ namespace Bytes
     {
         [SerializeField] private string eventName;
         [SerializeField] private bool removeAfterDispatch = false;
-        private void Awake()
+        private void Start()
         {
             EventManager.AddEventListener(eventName, HandleEventDispatch);
         }

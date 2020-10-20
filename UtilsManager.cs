@@ -5,12 +5,14 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Globalization;
 
+using UnityEngine.EventSystems;
+
 namespace Bytes
 {
     public class IntEvent : UnityEvent<int> { }
     public class BoolEvent : UnityEvent<bool> { }
     public class StringEvent : UnityEvent<string> { }
-    public class FloatEvent : UnityEvent<int> { }
+    public class FloatEvent : UnityEvent<float> { }
 
     [System.Serializable]
     [SerializeField]
@@ -76,6 +78,24 @@ namespace Bytes
             return lChilds.ToArray();
         }
 
+        static public Canvas CreateCanvas(Transform parent, String canvasName = "UtilsCreatedCanvas")
+        {
+            var g = new GameObject(canvasName);
+            Canvas createdCanvas = g.AddComponent<Canvas>();
+            createdCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            var cavansScaler = g.AddComponent<CanvasScaler>();
+            cavansScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            cavansScaler.referenceResolution = new Vector2(1920, 1080);
+
+            if (GameObject.FindObjectOfType<EventSystem>() == null) { g.AddComponent<EventSystem>(); }
+            if (GameObject.FindObjectOfType<StandaloneInputModule>() == null) { g.AddComponent<StandaloneInputModule>(); }
+
+            g.transform.SetParent(parent);
+
+            return createdCanvas;
+        }
+
         static public GameObject Clone(GameObject pOriginal, Vector3 pPosition) { return Clone(pOriginal, pPosition, pOriginal.transform.localScale, Quaternion.identity.eulerAngles); }
         static public GameObject Clone(GameObject pOriginal, Vector3 pPosition, Vector3 pScale, Vector3 pRotation)
         {
@@ -83,6 +103,22 @@ namespace Bytes
             lNewGameObject.transform.SetParent(pOriginal.transform.parent);
             lNewGameObject.transform.localScale = pScale;
             lNewGameObject.name = pOriginal.name + " - clone";
+            return lNewGameObject;
+        }
+
+        static public GameObject CreatePrefabFromResources(string path, Vector3 pPosition)
+        {
+            return CreatePrefabFromResources(path, pPosition, null, Vector3.one, Vector3.zero);
+        }
+        static public GameObject CreatePrefabFromResources(string path, Vector3 pPosition, Transform pParent)
+        {
+            return CreatePrefabFromResources(path, pPosition, pParent, Vector3.one, Vector3.zero);
+        }
+        static public GameObject CreatePrefabFromResources(string path, Vector3 pPosition, Transform pParent, Vector3 pScale, Vector3 pRotation)
+        {
+            var lNewGameObject = GameObject.Instantiate(Resources.Load<GameObject>(path), pPosition, Quaternion.Euler(pRotation));
+            if (pParent != null) { lNewGameObject.transform.SetParent(pParent); }
+            lNewGameObject.transform.localScale = pScale;
             return lNewGameObject;
         }
 
@@ -257,5 +293,29 @@ namespace Bytes
             TextInfo txtInfo = new CultureInfo("en-us", false).TextInfo;
             return txtInfo.ToTitleCase(s).Replace(' ', ' ').Replace(" ", System.String.Empty);
         }
+
+        static public Quaternion GetRotationTowardDirection(Vector2 dir)
+        {
+            return 
+                Quaternion.AngleAxis(
+                  // Angle processing
+                  Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg
+                , Vector3.forward);
+        }
+
+        static public Vector3 GetMousePos()
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0;
+            return mousePos;
+        }
+
+        static public Vector3 GetDirFromMouse(Transform origin)
+        {
+            Vector3 dir = GetMousePos() - origin.transform.position;
+            dir.Normalize();
+            return dir;
+        }
+
     }
 }

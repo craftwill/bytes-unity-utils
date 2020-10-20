@@ -25,9 +25,15 @@ namespace Bytes
         }
 
         // Only use variation suffix if nbVariation is defined
-        public void PlayAnimOnce(BaseAnimState animState, string prefix)
+        public void PlayAnimOnce(BaseAnimState animState, string prefix, string speedParamName = "", float speedMult = 1f)
         {
             CancelCurrentPlayOnceAnim();
+
+            if (speedParamName != "")
+            {
+                Debug.Log("set " + speedParamName + " : " + speedMult);
+                animator.SetFloat(speedParamName, speedMult);
+            }
 
             currentPlayOnceAnim = Utils.PlayAnimatorClip(animator, BuildClipName(prefix, animState.ClipName, animState.NbVariations), ()=> {
                 currentPlayOnceAnim = null;
@@ -56,8 +62,8 @@ namespace Bytes
 
         private void PlayStateLoopedAnimation(string clipName, bool force = false)
         {
-            if (force != true && currentPlayOnceAnim != null || enabled == false) { return; }
-            animator.Play(clipName, -1, 0);
+            if (force != true && currentPlayOnceAnim != null || enabled == false || animator == null) { return; }
+            animator?.Play(clipName, -1, 0);
         }
 
         private string BuildClipName(string prefix, string clipName, int nbVariation = -1)
