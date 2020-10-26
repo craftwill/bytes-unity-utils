@@ -79,6 +79,17 @@ namespace Bytes
             return f;
         }
 
+        public void Stop()
+        {
+            SetLoopedState(BaseAnimState.Nothing);
+            currentPlayOnceAnim?.Stop(false);
+        }
+
+        public Animator GetAnimator()
+        {
+            return animator;
+        }
+
     }
 
     public class BaseAnimState

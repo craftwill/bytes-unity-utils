@@ -40,6 +40,9 @@ namespace Bytes
                 // Reseting time left
                 timeLeft = timerData.TimerMax;
 
+                // Make image inactive looking
+                fillingImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
+
                 // Restarting animation
                 currentAnim = Animate.LerpSomething(timeLeft, GetStepHandler(), HandleAnimEnd);
             }
@@ -74,6 +77,9 @@ namespace Bytes
             fillingImage.fillAmount = 1;
             currentAnim.Stop(false);
             currentAnim = null;
+
+            fillingImage.color = Color.white;
+            if (timeLeftText != null) { timeLeftText.text = ""; }
         }
 
         public class TimerData : Data

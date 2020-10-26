@@ -21,10 +21,6 @@ namespace Bytes
         private void Awake()
         {
             instance = this;
-        }
-
-        private void Start()
-        {
             if (debugManagerCanvas == null)
             {
                 debugManagerCanvas = Utils.CreateCanvas(this.transform, "debugManagerCanvas");
@@ -47,7 +43,7 @@ namespace Bytes
                 debugText.rectTransform.sizeDelta = new Vector2(900, 900);
                 debugText.rectTransform.anchoredPosition = new Vector2(15, -15);
          
-                SetDebugText("testing");
+                SetDebugText("");
             }
         }
 
