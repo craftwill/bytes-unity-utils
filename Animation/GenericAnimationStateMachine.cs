@@ -31,7 +31,7 @@ namespace Bytes
 
             if (speedParamName != "")
             {
-                Debug.Log("set " + speedParamName + " : " + speedMult);
+                //Debug.Log("set " + speedParamName + " : " + speedMult);
                 animator.SetFloat(speedParamName, speedMult);
             }
 
