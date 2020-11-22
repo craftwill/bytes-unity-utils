@@ -109,7 +109,7 @@ namespace Bytes
         static public Animate FadeCanvasGroup(CanvasGroup targetComponent, float duration_, float alphaStart = 0.0f, float alphaEnd = 1.0f, System.Action endCallback_ = null)
         {
             return Animate.LerpSomething(duration_, (step) => {
-                Utils.SetOpacity(targetComponent, step);
+                Utils.SetOpacity(targetComponent, Mathf.Lerp(alphaStart, alphaEnd, step));
             }, endCallback_);
         }
 
