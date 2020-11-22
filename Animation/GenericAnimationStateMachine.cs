@@ -31,22 +31,10 @@ namespace Bytes
 
             if (speedParamName != "")
             {
-                //Debug.Log("set " + speedParamName + " : " + speedMult);
                 animator.SetFloat(speedParamName, speedMult);
             }
 
             currentPlayOnceAnim = Utils.PlayAnimatorClip(animator, BuildClipName(prefix, animState.ClipName, animState.NbVariations), ()=> {
-                currentPlayOnceAnim = null;
-                PlayStateLoopedAnimation(BuildClipName(prefix, state.ClipName));
-            });
-        }
-
-        // Only use variation suffix if nbVariation is defined
-        public void PlayAnimOnceCustom(string animName, string prefix)
-        {
-            CancelCurrentPlayOnceAnim();
-
-            currentPlayOnceAnim = Utils.PlayAnimatorClip(animator, BuildClipName(prefix, animName, -1), () => {
                 currentPlayOnceAnim = null;
                 PlayStateLoopedAnimation(BuildClipName(prefix, state.ClipName));
             });
