@@ -14,7 +14,7 @@ namespace Bytes.Language
     ///         en/lang.json
     /// 
     /// </summary>
-    [ExecuteAlways]
+    //[ExecuteAlways]
     public class LangManager : MonoBehaviour
     {
         static string TEXT_NOT_FOUND = "NULLPTR_TEXT";
@@ -32,16 +32,16 @@ namespace Bytes.Language
         public string currentLangage;
         LangDataInstance[] currentLangDataInstance;
 
-        protected void Awake()
+        protected virtual void Awake()
         {
             Inititialize();
         }
 
-        public void Inititialize()
+        public virtual void Inititialize()
         {
             instance = this;
             if (keepInScene) { DontDestroyOnLoad(this.gameObject); }
-            if (loadLangInAwake) { LoadLangMultipleFiles(currentLangage, new string[] { currentLangage + "-lang", "quests" }); }
+            if (loadLangInAwake) { LoadLangMultipleFiles(currentLangage, new string[] { currentLangage + "-lang", "quests", "wandererRants" }); }
 
             print("LangManager loaded langs!");
             //print(GetText(1) + " WORKED!");
@@ -113,6 +113,9 @@ namespace Bytes.Language
 
                 if (additive) { GetInstance().currentLangDataInstance[index] = langData; }
                 else { GetInstance().currentLangDataInstance[0] = langData; }
+
+                print("Loaded: " + filePath);
+
             }
             catch (System.Exception exc)
             {

@@ -61,7 +61,7 @@ namespace Bytes
                 Animate.FadeCanvasGroup(canvasGroup, 2f, 0, 1);
             }
             debugText.text = text;
-            Debug.Log(text);
+            //Debug.Log(text);
         }
 
         static public void AddDebugText(string text)
@@ -73,7 +73,7 @@ namespace Bytes
         public void AddDebugText_Private(string text)
         {
             debugText.text += "\n" + text;
-            Debug.Log(text);
+            //Debug.Log(text);
         }
 
     }
