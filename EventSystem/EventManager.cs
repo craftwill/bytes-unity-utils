@@ -16,6 +16,11 @@ namespace Bytes
             Instance = this;
         }
 
+        private void Start()
+        {
+            Animate.Delay(5f, ()=> { print("_eventListeners: " + _eventListeners.Count); });
+        }
+
         public static void RemoveEventListener(string eventName, Action<Data> functionToCall)
         {
             Instance._eventListeners[eventName].Remove(functionToCall);
