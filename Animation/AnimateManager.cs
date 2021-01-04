@@ -141,7 +141,7 @@ namespace Bytes
                 else if (anim.GetIsPlaying())
                 {
                     //print(Time.deltaTime);
-                    anim.TriggerStepCallback(Time.deltaTime);
+                    anim.TriggerStepCallback(Time.unscaledDeltaTime);
                 }
             }
             // Remove unused animations
