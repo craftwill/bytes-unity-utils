@@ -7,7 +7,7 @@ namespace Bytes.Language
 {
     public class LangText : MonoBehaviour
     {
-        public int textId;
+        public string textId;
         public int speficicFile = -1;
         Text textComponent;
         public void UpdateText()

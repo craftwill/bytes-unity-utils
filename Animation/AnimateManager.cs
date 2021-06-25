@@ -6,11 +6,12 @@ namespace Bytes
 {
     public class Animate
     {
-        public Animate(float duration_, System.Action<float> stepCallback_, System.Action endCallback_)
+        public Animate(float duration_, System.Action<float> stepCallback_, System.Action endCallback_, bool timeScaled_)
         {
             duration = duration_;
             stepCallback = stepCallback_;
             endCallback = endCallback_;
+            timeScaled = timeScaled_;
         }
         public void Play(bool resetTimeLeft = true)
         {
@@ -61,6 +62,10 @@ namespace Bytes
         {
             return done;
         }
+        public bool GetIsTimeScaled()
+        {
+            return done;
+        }
 
         private float duration;
         private System.Action<float> stepCallback;
@@ -69,20 +74,21 @@ namespace Bytes
         private bool playing;
         private bool done;
         private float timeLeft;
+        private bool timeScaled;
 
         /// <summary>
         /// Wait a fixed duration before calling function.
         /// </summary>
-        static public Animate Delay(float duration_, System.Action endCallback_)
+        static public Animate Delay(float duration_, System.Action endCallback_, bool timeScaled_ = false)
         {
-            Animate newAnimation = new Animate(duration_, null, endCallback_);
+            Animate newAnimation = new Animate(duration_, null, endCallback_, timeScaled_);
             newAnimation.Play(); AnimateManager.GetInstance().AddAnimation(newAnimation); return newAnimation;
         }
 
         /// <summary>
         /// Repeat execution while callback return is true.
         /// </summary>
-        static public Animate Repeat(float duration_, System.Func<bool> callback_, int maxRepeat = -1)
+        static public Animate Repeat(float duration_, System.Func<bool> callback_, int maxRepeat = -1, bool timeScaled_ = false)
         {
             Animate newAnimation = new Animate(duration_, null, () => {
                 if (callback_?.Invoke() == true)
@@ -90,27 +96,27 @@ namespace Bytes
                     if (maxRepeat == 0) { return; } else { if (maxRepeat != -1) { maxRepeat--; } }
                     Animate.Repeat(duration_, callback_, maxRepeat);
                 }
-            });
+            }, timeScaled_);
             newAnimation.Play(); AnimateManager.GetInstance().AddAnimation(newAnimation); return newAnimation;
         }
 
         /// <summary>
         /// Used to receive a T value from 0.0f to 1.0f over a certain duration each frame.
         /// </summary>
-        static public Animate LerpSomething(float duration_, System.Action<float> stepCallback_, System.Action endCallback_ = null)
+        static public Animate LerpSomething(float duration_, System.Action<float> stepCallback_, System.Action endCallback_ = null, bool timeScaled_ = false)
         {
-            Animate newAnimation = new Animate(duration_, stepCallback_, endCallback_);
+            Animate newAnimation = new Animate(duration_, stepCallback_, endCallback_, timeScaled_);
             newAnimation.Play(); AnimateManager.GetInstance().AddAnimation(newAnimation); return newAnimation;
         }
 
         /// <summary>
         /// Used to receive a T value from 0.0f to 1.0f over a certain duration each frame.
         /// </summary>
-        static public Animate FadeCanvasGroup(CanvasGroup targetComponent, float duration_, float alphaStart = 0.0f, float alphaEnd = 1.0f, System.Action endCallback_ = null)
+        static public Animate FadeCanvasGroup(CanvasGroup targetComponent, float duration_, float alphaStart = 0.0f, float alphaEnd = 1.0f, System.Action endCallback_ = null, bool timeScaled_ = false)
         {
             return Animate.LerpSomething(duration_, (step) => {
                 Utils.SetOpacity(targetComponent, Mathf.Lerp(alphaStart, alphaEnd, step));
-            }, endCallback_);
+            }, endCallback_, timeScaled_);
         }
 
     }
@@ -140,8 +146,8 @@ namespace Bytes
                 if (anim.GetIsDone()) { AnimationsToRemove.Add(anim); }
                 else if (anim.GetIsPlaying())
                 {
-                    //print(Time.deltaTime);
-                    anim.TriggerStepCallback(Time.unscaledDeltaTime);
+                    if (anim.GetIsTimeScaled()) { anim.TriggerStepCallback(Time.deltaTime); }
+                    else                        { anim.TriggerStepCallback(Time.unscaledDeltaTime); }
                 }
             }
             // Remove unused animations

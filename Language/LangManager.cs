@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using Newtonsoft.Json;
 
 namespace Bytes.Language
 {
@@ -30,7 +33,7 @@ namespace Bytes.Language
 
         [Header("State")]
         public string currentLangage;
-        LangDataInstance[] currentLangDataInstance;
+        Dictionary<string, string>[] currentLangDataInstances;
 
         protected virtual void Awake()
         {
@@ -50,7 +53,7 @@ namespace Bytes.Language
 
         static public void LoadLang(string lang, string fileName = "-lang")
         {
-            GetInstance().currentLangDataInstance = new LangDataInstance[1];
+            GetInstance().currentLangDataInstances = new Dictionary<string, string>[1];
             GetInstance().currentLangage = lang;
             LoadLangDataInstance("Lang/" + lang + "/" + fileName + ".json");
             UpdateAllLangTextInScene();
@@ -58,7 +61,7 @@ namespace Bytes.Language
 
         static public void LoadLangMultipleFiles(string lang, string[] fileNames)
         {
-            GetInstance().currentLangDataInstance = new LangDataInstance[fileNames.Length];
+            GetInstance().currentLangDataInstances = new Dictionary<string, string>[fileNames.Length];
             GetInstance().currentLangage = lang;
             for (int i = 0; i < fileNames.Length; i++)
             {
@@ -77,10 +80,10 @@ namespace Bytes.Language
             }
         }
 
-        static public string GetText(int id)
+        static public string GetText(string id)
         {
             string text = "";
-            for (int i = 0; i < GetInstance().currentLangDataInstance.Length; i++)
+            for (int i = 0; i < GetInstance().currentLangDataInstances.Length; i++)
             {
                 text = GetText(id, i);
                 if (text != TEXT_NOT_FOUND && text != null) { return text; }
@@ -88,18 +91,25 @@ namespace Bytes.Language
             return text;
         }
 
-        static public string GetText(int id, int specificFileIndex)
+        static public string GetText(string id, int specificFileIndex)
         {
-            if (GetInstance().currentLangDataInstance.Length <= specificFileIndex) { return TEXT_NOT_FOUND; }
-            LangDataInstance langData = GetInstance().currentLangDataInstance[specificFileIndex];
-            if (langData == null) { Debug.LogWarning("Lang File index: " + specificFileIndex + " does not exits. There is " + GetInstance().currentLangDataInstance.Length + " files loaded."); return TEXT_NOT_FOUND; }
+            if (GetInstance().currentLangDataInstances.Length <= specificFileIndex) { return TEXT_NOT_FOUND; }
+            Dictionary<string, string> langData = GetInstance().currentLangDataInstances[specificFileIndex];
+            if (langData == null) { Debug.LogWarning("Lang File index: " + specificFileIndex + " does not exits. There is " + GetInstance().currentLangDataInstances.Length + " files loaded."); return TEXT_NOT_FOUND; }
             return GetText(langData, id);
         }
 
-        static protected string GetText(LangDataInstance langData, int id)
+        static protected string GetText(Dictionary<string, string> langData, string id)
         {
             string text = TEXT_NOT_FOUND;
-            text = langData.texts.Find(x => x.id == id)?.textValue;
+            try
+            {
+                langData.TryGetValue(id, out text);
+            }
+            catch (Exception e)
+            {
+                return TEXT_NOT_FOUND;
+            }
             return text;
         }
 
@@ -109,10 +119,13 @@ namespace Bytes.Language
             try
             {
                 TextAsset targetFile = Resources.Load<TextAsset>(filePath);
-                LangDataInstance langData = JsonUtility.FromJson<LangDataInstance>(targetFile.text);
+                //Dictionary<string, string> langData = JsonUtility.FromJson<Dictionary<string, string>>(targetFile.text);
 
-                if (additive) { GetInstance().currentLangDataInstance[index] = langData; }
-                else { GetInstance().currentLangDataInstance[0] = langData; }
+                // Newtonsoft json serializer needed
+                var langData = JsonConvert.DeserializeObject<Dictionary<string, string>>(targetFile.text);
+
+                if (additive) { GetInstance().currentLangDataInstances[index] = langData; }
+                else { GetInstance().currentLangDataInstances[0] = langData; }
 
                 print("Loaded: " + filePath);
 
@@ -126,7 +139,7 @@ namespace Bytes.Language
 
         static public bool GetIsReady()
         {
-            return GetInstance() != null && GetInstance().currentLangDataInstance.Length > 0;
+            return GetInstance() != null && GetInstance().currentLangDataInstances.Length > 0;
         }
 
     }
